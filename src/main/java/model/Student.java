@@ -1,5 +1,7 @@
 package model;
 
+import util.EmailUtils;
+import util.PhoneUtils;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
@@ -12,77 +14,83 @@ public class Student {
     private String email;
     private String guardianName;
     private LocalDate dateOfBirth;
-    private LocalDateTime createdAt;
+    private final LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 
-    public Student(int id, Gender gender, String fullName, String phoneNumber, String address, String email, String guardianName, LocalDate dateOfBirth, LocalDateTime createdAt) {
+    // for reconstructing a student fetched from DB
+    public Student(int id, String fullName, Gender gender, String phoneNumber,
+                   String address, String email, String guardianName,
+                   LocalDate dateOfBirth, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.id = id;
-        this.gender = gender;
         this.fullName = fullName;
-        this.phoneNumber = phoneNumber;
+        this.gender = gender;
+        setPhoneNumber(phoneNumber);
         this.address = address;
         this.email = email;
         this.guardianName = guardianName;
         this.dateOfBirth = dateOfBirth;
         this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     }
 
-    public Student(String fullName, Gender gender, String phoneNumber, String address,String guardianName, LocalDate dateOfBirth, String email, LocalDateTime createdAt) {
+    // for creating new student
+    public Student(String fullName, Gender gender, String phoneNumber,
+                   String address, String email, String guardianName,
+                   LocalDate dateOfBirth) {
         this.fullName = fullName;
         this.gender = gender;
-        this.phoneNumber = phoneNumber;
+        setPhoneNumber(phoneNumber);
         this.address = address;
-        this.dateOfBirth = dateOfBirth;
         this.email = email;
         this.guardianName = guardianName;
-        this.createdAt = createdAt;
+        this.dateOfBirth = dateOfBirth;
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
     }
 
-    public int getId() {
-        return id;
+    public int getId() { return id; }
+    public String getFullName() { return fullName; }
+    public Gender getGender() { return gender; }
+    public String getPhoneNumber() { return phoneNumber; }
+    public String getAddress() { return address; }
+    public String getEmail() { return email; }
+    public String getGuardianName() { return guardianName; }
+    public LocalDate getDateOfBirth() { return dateOfBirth; }
+    public LocalDateTime getCreatedAt() { return createdAt; }
+    public LocalDateTime getUpdatedAt() { return updatedAt; }
+
+    public void setPhoneNumber(String phoneNumber) {
+        this.phoneNumber = PhoneUtils.validateAndNormalize(phoneNumber);
+        this.updatedAt = LocalDateTime.now();
     }
 
-    public Gender getGender() {
-        return gender;
-    }
-
-    public String getFullName() {
-        return fullName;
-    }
-
-    public String getAddress() {
-        return address;
-    }
-
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public String getGuardianName() {
-        return guardianName;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDate getDateOfBirth() {
-        return dateOfBirth;
-    }
-
-    public static boolean isValidPhoneNumber(String phoneNumber){
-        if(phoneNumber == null) return false;
-        return phoneNumber.matches("^(98|97)\\d{8}$");
-    }
-    public void setPhoneNumber(String phoneNumber){
-        if(!isValidPhoneNumber(phoneNumber))
-        {
-            throw new IllegalArgumentException("Invalid Nepali phone number: " + phoneNumber);
+    public void setFullName(String fullName) {
+        if (fullName == null || fullName.isBlank()) {
+            throw new IllegalArgumentException("Name cannot be empty");
         }
-        this.phoneNumber = phoneNumber;
+        this.fullName = fullName.trim();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void setAddress(String address) {
+        if (address == null || address.isBlank()) {
+            throw new IllegalArgumentException("Address can't be empty");
+        }
+        this.address = address.trim();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void setGender(String input) {
+        this.gender = Gender.fromString(input);
+        this.updatedAt = LocalDateTime.now();
+    }
+    public void setEmail(String email){
+        EmailUtils.validate(email);
+        this.email = email.trim();
+    }
+    public void setGuardianName(String guardianName){
+        if(guardianName == null || guardianName.isBlank()) throw new IllegalArgumentException("Parents name cannot be empty");
+        this.guardianName = guardianName;
     }
 
     @Override
@@ -97,6 +105,7 @@ public class Student {
                 ", guardianName='" + guardianName + '\'' +
                 ", dateOfBirth=" + dateOfBirth +
                 ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
                 '}';
     }
 }
