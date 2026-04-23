@@ -41,7 +41,7 @@ public class Student {
         this.gender = gender;
         setPhoneNumber(phoneNumber);
         this.address = address;
-        this.email = email;
+        setEmail(email);
         this.guardianName = guardianName;
         this.dateOfBirth = dateOfBirth;
         this.createdAt = LocalDateTime.now();
@@ -87,12 +87,13 @@ public class Student {
     public void setEmail(String email){
         EmailUtils.validate(email);
         this.email = email.trim();
+        this.updatedAt = LocalDateTime.now();
     }
     public void setGuardianName(String guardianName){
         if(guardianName == null || guardianName.isBlank()) throw new IllegalArgumentException("Parents name cannot be empty");
         this.guardianName = guardianName;
+        this.updatedAt = LocalDateTime.now();
     }
-
     @Override
     public String toString() {
         return "Student{" +
