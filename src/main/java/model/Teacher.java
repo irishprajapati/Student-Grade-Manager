@@ -4,22 +4,24 @@ import util.PhoneUtils;
 import java.time.LocalDateTime;
 public class Teacher {
     private int id;
+    private int userId;
     private String fullName;
     private String location;
     private String phoneNumber;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
-    public Teacher(int id, String fullName, String location, String phoneNumber, LocalDateTime createdAt, LocalDateTime updatedAt){
+    public Teacher(int id, int userId, String fullName, String location, String phoneNumber, LocalDateTime createdAt, LocalDateTime updatedAt){
         this.id = id;
-        this.fullName = fullName;
-        this.location = location;
+        this.userId = validateUserID(userId);
+        this.fullName = validateName(fullName);
+        this.location = validateLocation(location);
         setPhoneNumber(phoneNumber);
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
-    public Teacher(String fullName, String location, String phoneNumber){
-        this.fullName = fullName;
-        this.location = location;
+    public Teacher( String fullName, String location, String phoneNumber){
+        this.fullName = validateName(fullName);
+        this.location = validateLocation(location);
         setPhoneNumber(phoneNumber);
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
@@ -27,6 +29,10 @@ public class Teacher {
 
     public int getId() {
         return id;
+    }
+
+    public int getUserId() {
+        return userId;
     }
 
     public String getFullName() {
@@ -48,7 +54,14 @@ public class Teacher {
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
-    public void setFullName(String fullName){
+    public void setUserId(int userId) {
+        this.userId= userId;
+    }
+    private int validateUserID(int user_id){
+        if (user_id <= 0) throw new IllegalArgumentException("Invalid user id");
+        return user_id;
+    }
+    private String validateName(String fullName){
         if(fullName == null) throw new IllegalArgumentException("Name cannot be null");
         fullName = fullName.trim();
         if(fullName.isEmpty()) throw new IllegalArgumentException("Name cannot be empty");
@@ -57,11 +70,13 @@ public class Teacher {
         if (!fullName.matches("^[\\p{L} .'-]+$")) {
             throw new IllegalArgumentException("Name contains invalid characters");
         }
-        this.fullName = fullName;
+        return fullName;
+    }
+    public void setFullName(String fullName){
+        this.fullName = validateName(fullName);
         this.updatedAt = LocalDateTime.now();
     }
-
-    public void setLocation(String location) {
+    private String validateLocation(String location){
         if(location == null) throw new IllegalArgumentException("Location cannot be null");
         location = location.trim();
         if(location.isEmpty()) throw new IllegalArgumentException("Location cannot be empty");
@@ -70,12 +85,29 @@ public class Teacher {
         if (!location.matches("^[\\p{L} .'-]+$")) {
             throw new IllegalArgumentException("Location contains invalid characters");
         }
-        this.location = location;
+        return location;
+    }
+
+    public void setLocation(String location) {
+        this.location = validateLocation(location);
         this.updatedAt = LocalDateTime.now();
     }
 
     public void setPhoneNumber(String phoneNumber) {
         this.phoneNumber = PhoneUtils.validateAndNormalize(phoneNumber);
         this.updatedAt = LocalDateTime.now();
+    }
+
+    @Override
+    public String toString() {
+        return "Teacher{" +
+                "id=" + id +
+                ", userId=" + userId +
+                ", fullName='" + fullName + '\'' +
+                ", location='" + location + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
     }
 }

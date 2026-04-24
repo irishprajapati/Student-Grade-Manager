@@ -7,23 +7,23 @@ import java.time.LocalDateTime;
 
 public class User {
     private int id;
-    private String username;
+    private String fullname;
     private String password;
     private Role role;
     private final LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 
-    public User(int id, String username, String password, Role role, LocalDateTime createdAt, LocalDateTime updatedAt){
+    public User(int id, String fullname, String password, Role role, LocalDateTime createdAt, LocalDateTime updatedAt){
         this.id = id;
-        this.username = username;
-        this.password = password;
+        this.fullname = validateUsername(fullname);
+        this.password = validatePassword(password);
         this.role = role;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
     }
-    public User(String username, String password, Role role){
-        this.username = username;
-        this.password = password;
+    public User(String fullname, String password, Role role){
+        this.fullname = validateUsername(fullname);
+        this.password = validatePassword(password);
         this.role = role;
         this.createdAt = LocalDateTime.now();
         this.updatedAt = LocalDateTime.now();
@@ -32,9 +32,8 @@ public class User {
     public int getId() {
         return id;
     }
-
-    public String getUsername() {
-        return username;
+    public String getfullname() {
+        return fullname;
     }
 
     public String getPassword() {
@@ -52,26 +51,26 @@ public class User {
     public LocalDateTime getUpdatedAt() {
         return updatedAt;
     }
-    public void setUsername(String username) {
-        if (username == null) {
+    private String validateUsername(String fullname){
+        if (fullname == null) {
             throw new IllegalArgumentException("Name cannot be null");
         }
-        username = username.trim();
-        if (username.isEmpty()) {
+        fullname = fullname.trim();
+        if (fullname.isEmpty()) {
             throw new IllegalArgumentException("Name cannot be empty");
         }
         // normalize multiple spaces → single space
-        username = username.replaceAll("\\s+", " ");
-        if (username.length() < 2 || username.length() > 50) {
+        fullname = fullname.replaceAll("\\s+", " ");
+        if (fullname.length() < 2 || fullname.length() > 50) {
             throw new IllegalArgumentException("Name must be between 2 and 50 characters");
         }
         // Unicode-safe (important)
-        if (!username.matches("^[\\p{L} .'-]+$")) {
+        if (!fullname.matches("^[\\p{L} .'-]+$")) {
             throw new IllegalArgumentException("Name contains invalid characters");
         }
-        this.username = username;
+        return fullname;
     }
-    public void setPassword(String password){
+    private String validatePassword(String password){
         if(password == null){
             throw new IllegalArgumentException("Password cannot be null");
         }
@@ -86,11 +85,32 @@ public class User {
         if (!password.matches("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@#$%^&+=!]).{8,}$")) {
             throw new IllegalArgumentException("Password must be at least 8 characters long and include uppercase, lowercase, number, and special character");
         }
+        return password;
+    }
+
+    public void setUsername(String fullname) {
+        this.fullname= validateUsername(fullname);
+        this.updatedAt = LocalDateTime.now();
+    }
+    public void setPassword(String password){
         this.password = PasswordUtil.hashPassword(password);
+        this.updatedAt = LocalDateTime.now();
     }
 
     public void setRole(String input) {
         this.role = Role.fromString(input);
-        this.updatedAt = updatedAt;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", fullname='" + fullname + '\'' +
+                ", password='" + password + '\'' +
+                ", role=" + role +
+                ", createdAt=" + createdAt +
+                ", updatedAt=" + updatedAt +
+                '}';
     }
 }
