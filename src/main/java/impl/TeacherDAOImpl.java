@@ -4,20 +4,17 @@ import Interfaces.TeacherDAO;
 import dao.BaseDao;
 import model.Teacher;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.List;
 
 public class TeacherDAOImpl extends BaseDao implements TeacherDAO {
     @Override
     public void addTeacher(Teacher t) throws SQLException {
-        String sql = "INSERT INTO teachers(id, user_id, full_name, location, phone_number, created_at, updated_at)\n" +
+        String sql = "INSERT INTO teachers( user_id, full_name, location, phone_number, created_at, updated_at)\n" +
                 "VALUES (?, ?, ?, ?, ?, ?, ?)";
         try(Connection con = getConnection();
             PreparedStatement ps = con.prepareStatement(sql)){
-            ps.setInt(1, t.getId());
             ps.setInt(2, t.getUserId());
             ps.setString(3, t.getFullName());
             ps.setString(4, t.getLocation());
@@ -35,7 +32,7 @@ public class TeacherDAOImpl extends BaseDao implements TeacherDAO {
 
     @Override
     public void updateTeacher(Teacher t) throws SQLException {
-        String sql = "UPDATE teachers SET full_name=?, location=?, phone_number=?";
+        String sql = "UPDATE teachers SET full_name=?, location=?, phone_number=?, updated_at=? WHERE id=?";
         try(Connection con = getConnection();
         PreparedStatement ps = con.prepareStatement(sql)){
             ps.setString(1, t.getFullName());
@@ -56,25 +53,85 @@ public class TeacherDAOImpl extends BaseDao implements TeacherDAO {
         try(Connection con = getConnection();
         PreparedStatement ps = con.prepareStatement(sql)){
             ps.setInt(1, id);
-            int rows = ps.executeQuery();
-
+            int rows = ps.executeUpdate();
+            if(rows>0){
+                System.out.println("Teacher deleted successfully");
+            }
+        }catch (SQLException e){
+            System.out.println("Error deleting teacher: " + e.getMessage());
         }
-
-
     }
 
     @Override
     public Teacher getTeacherById(int id) throws SQLException {
+        String sql = "SELECT * FROM teachers WHERE id=?";
+        try(Connection con = getConnection();
+        PreparedStatement ps = con.prepareStatement(sql)){
+            ps.setInt(1, id);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                return new Teacher(
+                        rs.getInt("id"),
+                        rs.getInt("user_id"),
+                        rs.getString("full_name"),
+                        rs.getString("location"),
+                        rs.getString("phone_number"),
+                        rs.getTimestamp("created_at").toLocalDateTime(),
+                        rs.getTimestamp("updated_at").toLocalDateTime()
+                );
+            }
+        }catch (SQLException e){
+            System.out.println("Error getting teacher details by Id: " + e.getMessage());
+        }
         return null;
     }
 
     @Override
     public Teacher getTeacherByUserId(int userId) throws SQLException {
+        String sql = "SELECT * FROM teachers WHERE user_id=?";
+        try(Connection con = getConnection();
+            PreparedStatement ps = con.prepareStatement(sql)){
+            ps.setInt(1, userId);
+            ResultSet rs = ps.executeQuery();
+            if(rs.next()){
+                return new Teacher(
+                        rs.getInt("id"),
+                        rs.getInt("user_id"),
+                        rs.getString("full_name"),
+                        rs.getString("location"),
+                        rs.getString("phone_number"),
+                        rs.getTimestamp("created_at").toLocalDateTime(),
+                        rs.getTimestamp("updated_at").toLocalDateTime()
+                );
+            }
+        }catch (SQLException e){
+            System.out.println("Error getting teacher details by Id: " + e.getMessage());
+        }
         return null;
     }
 
     @Override
     public List<Teacher> getAllTeachers() throws SQLException {
-        return List.of();
+        List<Teacher> teachers = new ArrayList<>();
+        String sql = "SELECT * FROM teachers";
+        try(Connection con = getConnection();
+        PreparedStatement ps = con.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery()){
+            while(rs.next()){
+                Teacher teacher = new Teacher(
+                        rs.getInt("id"),
+                        rs.getInt("user_id"),
+                        rs.getString("full_name"),
+                        rs.getString("location"),
+                        rs.getString("phone_number"),
+                        rs.getTimestamp("created_at").toLocalDateTime(),
+                        rs.getTimestamp("updated_at").toLocalDateTime()
+                );
+                teachers.add(teacher);
+            }
+        }catch (SQLException e){
+            System.out.println("Error getting all Teachers: " + e.getMessage());
+        }
+        return teachers;
     }
 }
