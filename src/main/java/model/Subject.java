@@ -33,6 +33,15 @@ public class Subject {
     public int getTeacherId() {
         return teacherId;
     }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
     private String validateName(String name){
         if(name == null) throw new IllegalArgumentException("Name cannot be null");
         name = name.trim();
