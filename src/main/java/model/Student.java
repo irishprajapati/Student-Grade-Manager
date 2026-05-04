@@ -54,7 +54,7 @@ public class Student {
 
     // getters
     public int getId() { return id; }
-    public int getuserId() {
+    public int getUserId() {
         return userId;
     }
     public String getFullName() { return fullName; }
