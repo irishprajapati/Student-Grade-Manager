@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface TeacherDAO {
     //method signature - what operations can teacher perform
-     void addTeacher(Teacher t) throws SQLException;
+    void addTeacher(Teacher t) throws SQLException;
      void updateTeacher(Teacher t) throws SQLException;
      void deleteTeacher(int id) throws SQLException;
      Teacher getTeacherById(int id) throws SQLException;
