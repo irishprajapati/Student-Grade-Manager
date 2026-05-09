@@ -40,7 +40,7 @@ public class App {
             }
 
             System.out.print("Enter your password: ");
-            String password = scanner.nextLine();
+            String password = scanner.nextLine().trim();
 
             if (!PasswordUtil.verifyPassword(password, user.getPassword())) {
                 System.out.println("Invalid password");
