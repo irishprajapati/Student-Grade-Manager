@@ -1,16 +1,33 @@
 package db;
+
 import io.github.cdimascio.dotenv.Dotenv;
 import java.sql.Connection;
-import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+
 public class DBConnection {
-    private static final Dotenv dotenv = Dotenv.load();
-    private static final String URL = dotenv.get("DB_URL");
-    private static final String USERNAME = dotenv.get("DB_USERNAME");
-    private static final String PASSWORD = dotenv.get("DB_PASSWORD");
-    public static Connection getConnection() throws SQLException{
-        return DriverManager.getConnection(URL, USERNAME, PASSWORD);
+
+    private static Dotenv dotenv;
+
+    private static void loadEnv() {
+        if (dotenv == null) {
+            dotenv = Dotenv.configure()
+                    .ignoreIfMissing()
+                    .load();
+        }
+    }
+
+    public static Connection getConnection() throws SQLException {
+        loadEnv();
+
+        String url = dotenv.get("DB_URL");
+        String user = dotenv.get("DB_USERNAME");
+        String pass = dotenv.get("DB_PASSWORD");
+
+        if (url == null || user == null || pass == null) {
+            throw new RuntimeException("DB environment variables are missing!");
+        }
+
+        return DriverManager.getConnection(url, user, pass);
     }
 }
-
