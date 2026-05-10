@@ -16,7 +16,7 @@ public class User {
     public User(int id, String fullname, String password, Role role, LocalDateTime createdAt, LocalDateTime updatedAt){
         this.id = id;
         this.fullname = validateUsername(fullname);
-        this.password = validatePassword(password);
+        this.password = password;
         this.role = role;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;

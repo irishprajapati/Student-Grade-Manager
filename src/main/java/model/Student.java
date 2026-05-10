@@ -41,6 +41,7 @@ public class Student {
     public Student(int userId, String fullName, Gender gender, String phoneNumber,
                    String email,String location, String guardianName,
                    LocalDate dateOfBirth) {
+        this.userId = userId;
         this.fullName = validateFullName(fullName);
         this.gender = gender;
         this.phoneNumber = validatePhone(phoneNumber);
