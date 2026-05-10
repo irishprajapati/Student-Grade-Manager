@@ -236,5 +236,7 @@ public class StudentDAOImplTest {
                 .thenThrow(new SQLException("Connection lost"));
         assertThrows(DatabaseException.class, () -> dao.getStudentBySubjectId(1));
     }
+
     }
+
 }
