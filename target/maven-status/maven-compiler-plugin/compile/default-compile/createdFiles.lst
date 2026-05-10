@@ -12,6 +12,7 @@ com/example/App$1.class
 model/Subject.class
 model/Student.class
 impl/StudentDAOImpl.class
+com/example/HashGenerator.class
 Interfaces/UserDAO.class
 util/EmailUtils.class
 model/Role.class
