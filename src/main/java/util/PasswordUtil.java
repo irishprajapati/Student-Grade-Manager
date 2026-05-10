@@ -9,7 +9,6 @@ public class PasswordUtil {
 
     }
     public static boolean verifyPassword(String inputPassword, String storedHash){
-        String hashedInput = hashPassword(inputPassword);
-        return hashedInput.equals(storedHash);
+        return encoder.matches(inputPassword, storedHash);
     }
 }
